@@ -1,0 +1,5 @@
+
+dependencies {
+    implementation project(':tcp-common') /* 子模块之间的依赖 */
+
+}

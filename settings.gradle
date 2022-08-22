@@ -1,0 +1,7 @@
+// 一个父子结构的gradle项目
+rootProject.name = 'sb-netty'
+
+include 'tcp-server'
+include 'tcp-client'
+include 'tcp-common'
+
