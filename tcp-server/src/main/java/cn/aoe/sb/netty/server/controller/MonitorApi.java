@@ -3,6 +3,7 @@ package cn.aoe.sb.netty.server.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -17,6 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/monitor")
 public class MonitorApi {
 
+    @GetMapping("/")
+    public String health() {
+        return "health";
+    }
     /**
      * 所有可监控信息
      * @return json object

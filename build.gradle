@@ -55,6 +55,8 @@ subprojects {
     * gradle这里，可以让子项目，不需要引入依赖，直接继承 */
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-websocket'
+        implementation 'io.netty:netty-all:4.1.32.Final'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
