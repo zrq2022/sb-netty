@@ -18,6 +18,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+dependencies {
+    // 父项目不需要依赖，只需要定义子项目的依赖版本
+}
+
 /* 所有子项目的通用配置 */
 subprojects {
     /* 使用二进制插件 */
@@ -36,10 +40,19 @@ subprojects {
     [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
     repositories {
+        // mavenLocal()，这样gradle会使用maven本地仓库，否则gradle的本地仓库在 ${userHome}/.gradle/caches/modules-2/files-2.1
         mavenLocal()
+        // 这个是指定仓库，但是会报错`dependecies detachedConfiguration4 找不到`
+        // 原因是，这个仓库地址太老了，而且是http的
+        // maven {  url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://maven.aliyun.com/repository/public" }
         mavenCentral()
     }
-    /* 添加通用依赖 */
+
+    /* 添加依赖，类似maven的 dependency 子项目可以直接继承
+    * 但是，规范一些，应该是这样，父定义版本号，而有个common或core模块中定义了公共的依赖
+    * maven定义了dependencyManagement 子项目依然需要使用dependency，只是不需要引入版本号了
+    * gradle这里，可以让子项目，不需要引入依赖，直接继承 */
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-web'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'

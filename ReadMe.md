@@ -16,3 +16,8 @@ git init -b main
 git config user.name "zrq"
 git config user.email "zrq5462@163.com"
 ```
+
+# gradle 父子结构项目
+```
+这是第一次自己搭建，父子结构的gradle项目
+```
