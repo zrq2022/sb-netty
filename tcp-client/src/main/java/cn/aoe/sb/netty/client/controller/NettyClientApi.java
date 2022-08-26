@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * @author zhaoruiqing
  * @version 1.0
@@ -22,7 +24,7 @@ public class NettyClientApi {
 
     @GetMapping("/msg")
     public String sendMessage(@RequestParam("msg") String message) {
-        nettyClient.sendMsg(message);
+        nettyClient.sendMsg(message.getBytes(StandardCharsets.UTF_8));
         return "ok";
     }
 }

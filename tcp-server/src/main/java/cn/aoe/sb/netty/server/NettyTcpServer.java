@@ -1,6 +1,7 @@
 package cn.aoe.sb.netty.server;
 
 import cn.aoe.sb.netty.common.handler.FilterLoggingHandler;
+import cn.aoe.sb.netty.common.handler.NettyServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -9,12 +10,17 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
 
 /**
  * Netty 做服务端
@@ -24,15 +30,11 @@ import org.springframework.lang.NonNull;
  * @since 2022/8/23
  */
 @Slf4j
-//@Component
-public class NettyHttpServer implements ApplicationListener<ApplicationStartedEvent> {
-    @Value("${server.port:8080}")
+@Component
+@ConditionalOnProperty(value = "netty.port", matchIfMissing = false)
+public class NettyTcpServer implements ApplicationListener<ApplicationStartedEvent> {
+    @Value("${netty.port:9000}")
     private int port;
-    //private HttpServerHandler tcpServerHandler;
-    //
-    //public NettyHttpServer(HttpServerHandler tcpServerHandler) {
-    //    this.tcpServerHandler = tcpServerHandler;
-    //}
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
@@ -65,25 +67,31 @@ public class NettyHttpServer implements ApplicationListener<ApplicationStartedEv
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) {
-                //ch.pipeline().addLast("codec", new ByteT());
-                ch.pipeline().addLast("logging", new FilterLoggingHandler());
-                //ch.pipeline().addLast("bizHandler", tcpServerHandler);
+                //添加编解码
+                ch.pipeline().addLast("decoder", new ByteArrayDecoder())
+                        .addLast("encoder", new ByteArrayEncoder());
+                //ch.pipeline().addLast("logging", new FilterLoggingHandler());
+                ch.pipeline().addLast(  new NettyServerHandler());
             }
         });
 
-        ChannelFuture channelFuture = bootstrap.bind(port)
-                .syncUninterruptibly()
-                .addListener(future -> {
-                    String logBanner = "\n\n" +
-                            "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n" +
-                            "****                                                                                *\n" +
-                            "***                                                                                 *\n" +
-                            "**                  netty http server started on port {}.                           *\n" +
-                            "**                                                                                  *\n" +
-                            "*                                                                                   *\n" +
-                            "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n";
-                    log.info(logBanner, port);
-                });
+        ChannelFuture channelFuture = bootstrap.bind(port);
+        try {
+            channelFuture.syncUninterruptibly();
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+        channelFuture.addListener(future -> {
+            String logBanner = "\n\n" +
+                    "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n" +
+                    "****                                                                                *\n" +
+                    "***                                                                                 *\n" +
+                    "**                  netty http server started on port {}.                         *\n" +
+                    "**                                                                                  *\n" +
+                    "*                                                                                   *\n" +
+                    "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\n";
+            log.info(logBanner, port);
+        });
 
         channelFuture.channel().closeFuture()
                 .addListener(future -> {
@@ -92,4 +100,11 @@ public class NettyHttpServer implements ApplicationListener<ApplicationStartedEv
                     workerGroup.shutdownGracefully();
                 });
     }
+
+   /* @PreDestroy
+    public void destory() throws InterruptedException {
+        bossGroup.shutdownGracefully().sync();
+        workerGroup.shutdownGracefully().sync();
+        log.info("关闭Netty");
+    }*/
 }

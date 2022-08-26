@@ -60,11 +60,11 @@ public class FilterLoggingHandler extends LoggingHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)   {
         if (this.logger.isEnabled(this.internalLevel)) {
-            HttpRequest request = (HttpRequest) msg;
-            String log = request.method() + " " + request.uri() + " " + request.protocolVersion() + "\n" +
-                    CONTENT_TYPE + ": " + request.headers().get(CONTENT_TYPE) + "\n" +
-                    CONTENT_LENGTH + ": " + request.headers().get(CONTENT_LENGTH) + "\n";
-            this.logger.log(this.internalLevel,ctx.channel().toString() + " READ \n" + log);
+            //HttpRequest request = (HttpRequest) msg;
+            //String log = request.method() + " " + request.uri() + " " + request.protocolVersion() + "\n" +
+            //        CONTENT_TYPE + ": " + request.headers().get(CONTENT_TYPE) + "\n" +
+            //        CONTENT_LENGTH + ": " + request.headers().get(CONTENT_LENGTH) + "\n";
+            //this.logger.log(this.internalLevel,ctx.channel().toString() + " READ \n" + log);
         }
         ctx.fireChannelRead(msg);
     }

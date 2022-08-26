@@ -1,4 +1,4 @@
-package cn.aoe.sb.netty.client.core;
+package cn.aoe.sb.netty.common.handler;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

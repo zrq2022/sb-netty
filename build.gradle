@@ -14,10 +14,6 @@ configurations {
     }
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 dependencies {
     // 父项目不需要依赖，只需要定义子项目的依赖版本
 }
@@ -57,9 +53,15 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-websocket'
         implementation 'io.netty:netty-all:4.1.32.Final'
+        implementation 'cn.hutool:hutool-all:5.7.22'
         developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        compileOnly 'org.springframework.boot:spring-boot-configuration-processor'
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
     }
 }
