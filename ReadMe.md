@@ -1,11 +1,14 @@
 # 前言
 用这个项目申请idea的license
 
+```
 需要时常提交个代码
-需要最少3个月
+需要3个月
+需要时常维护
 需要github上配置email公开
 需要能通过github的用户api接口获取的用户信息：https://api.github.com/users/zrq2022/events/public
 需要有个JetBrains账号，跟github绑定
+```
 
 # 项目结构
 ```
